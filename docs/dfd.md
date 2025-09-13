@@ -1,114 +1,67 @@
-# Software Requirements Specification (SRS)
-## Academic Management System (AMS)
+# Data Flow Diagram (DFD) - Academic Management System
 
-**Version:** 1.1  
-**Date:** 2025-09-14  
-**Owner:** Garry Li (Peishuo Li)
+This document describes the Data Flow Diagrams (DFD) for the Academic Management System (AMS).  
+The DFDs illustrate how data moves between external entities, system processes, and data stores.
 
 ---
 
-## 1. Introduction
-### 1.1 Purpose
-The Academic Management System (AMS) manages students, teachers, courses, and course offerings within academic institutions.  
-It supports enrollment, grading, and attendance tracking across multiple terms, and provides foundations for AI-driven features.
+## Level 0: Context Diagram
 
-### 1.2 Scope
-Core functions include:
-- Student, teacher, course management
-- Term and course offering management
-- Enrollment, grade, and attendance tracking
-- Reports and analytics (GPA, ranking, conflict detection)
-- Security, backup, monitoring
-- AI-ready extensions (career path and course recommendations)
+The Level 0 DFD shows the AMS as a single process (black box) and its interactions with external entities.
 
----
+![DFD Level 0](dfd-level0.png)
 
-## 2. Stakeholders & Roles
-- **Admin**: Manage system entities, configure settings, perform operations (backup, monitoring).  
-- **Teacher**: Teach assigned course offerings, record grades, track attendance.  
-- **Student**: Enroll in course offerings, view grades, view attendance, get recommendations.  
+**External Entities and Flows**:
+- **Student**
+  - Sends: Enrollment Request, Transcript/Attendance Request
+  - Receives: Transcript, Attendance Report
+- **Teacher**
+  - Sends: Record Grades, Record Attendance, Class Roster Request
+  - Receives: Performance Report
+- **Admin**
+  - Sends: Setup Courses & Terms, Assign Teacher, Enrollment Statistics Request
+  - Receives: Analytics & Statistics Reports
 
 ---
 
-## 3. Functional Requirements
-### 3.1 Term Management
-- Create, view, update terms (year + semester).  
-- Ensure uniqueness of (year, semester).  
+## Level 1: System Decomposition
 
-### 3.2 Course Offering Management
-- Create course offerings tied to a term and a course.  
-- Assign one or more instructors via OfferingInstructor.  
-- Define schedule, section, and capacity.  
+The Level 1 DFD decomposes AMS into major subsystems (Managers) and data stores.
 
-### 3.3 Enrollment
-- Students enroll in specific course offerings.  
-- System prevents duplicate enrollments and detects time conflicts.  
+![DFD Level 1](dfd-level1.png)
 
-### 3.4 Grades
-- Teachers record one grade per student per course offering.  
-- Support GPA calculation and cohort ranking.  
+**Processes**:
+- **Enrollment Manager**
+  - Handles student enrollment requests
+  - Stores data in **Enrollment DB**
+- **Grade Manager**
+  - Handles teacher grade submissions
+  - Stores data in **Grade DB**
+- **Attendance Manager**
+  - Handles teacher attendance submissions
+  - Stores data in **Attendance DB**
+- **Course/Term Manager**
+  - Handles admin setup of courses, terms, and teacher assignments
+  - Stores data in **Course/Term DB**
+- **Reporting & Analytics**
+  - Collects data from all DBs
+  - Responds to queries from Student, Teacher, and Admin with customized reports
 
-### 3.5 Attendance
-- Teachers record attendance per date per course offering.  
-- Students can view attendance history.  
+**Data Stores**:
+- **Course/Term DB** → Course and term configurations
+- **Enrollment DB** → Student course enrollment records
+- **Grade DB** → Student grades and GPA values
+- **Attendance DB** → Student attendance records
 
-### 3.6 Reports & Analytics
-- Generate GPA transcripts.  
-- Ranking queries using window functions.  
-- Attendance summary reports.  
-
-### 3.7 Security & Administration
-- Role-based access control (Admin/Teacher/Student).  
-- Row-Level Security (RLS) to restrict access.  
-- Backup & PITR enabled via AWS RDS.  
-
-### 3.8 AI Extensions
-- Persist student career goals.  
-- Tag courses with relevant skills.  
-- Map careers to courses → recommend offerings.
+**External Entities**:
+- **Student**: Requests enrollment, transcript, attendance
+- **Teacher**: Records grades, attendance; requests class rosters
+- **Admin**: Sets up courses/terms, assigns teachers, requests statistics
 
 ---
 
-## 4. Non-Functional Requirements
-- **Availability**: 99.9% uptime (AWS RDS multi-AZ).  
-- **Performance**: Queries return ≤ 1s for datasets up to tens of thousands of rows.  
-- **Scalability**: Supports multiple terms, thousands of students, and offerings.  
-- **Security**: RBAC + RLS; data encrypted at rest and in transit.  
-- **Recoverability**: PITR + automated backups.  
-- **Observability**: CloudWatch metrics/alerts, slow query logs.  
+## Summary
 
----
-
-## 5. Data Model Overview
-Core entities:
-- **Student, Teacher, Course, Term, CourseOffering, OfferingInstructor**  
-Business entities:
-- **Enrollment, Grade, Attendance**  
-AI-ready entities:
-- **CareerGoal, CourseTag, CareerCourseMap**  
-
-Key relationships:
-- Term ⟷ CourseOffering  
-- Course ⟷ CourseOffering  
-- Teacher ⟷ OfferingInstructor ⟷ CourseOffering  
-- Student ⟷ Enrollment/Grade/Attendance ⟷ CourseOffering  
-
----
-
-## 6. Constraints & Assumptions
-- DBMS: PostgreSQL 15 on AWS RDS.  
-- Demo API: Java (Spring Boot).  
-- No full UI required; focus is on DB + API demonstration.  
-
----
-
-## 7. Acceptance Criteria
-- SRS, Data Dictionary, ERD, DFD, UML produced and stored in `docs/`.  
-- Schema supports multiple terms, multiple teachers per course offering.  
-- Requirements traceable to implemented SQL.  
-
----
-
-## 8. Change Log
-- **v1.0 (2025-09-13)**: Initial draft.  
-- **v1.1 (2025-09-14)**: Added Term, CourseOffering, OfferingInstructor to support multiple terms and multi-instructor scenarios.  
+- **Level 0** illustrates AMS as a whole and its interactions with external users.  
+- **Level 1** decomposes the system into five key processes with supporting data stores.  
+- The design ensures all core functions (enrollment, grading, attendance, course management, and reporting) are represented, while keeping data flows clear and complete.
