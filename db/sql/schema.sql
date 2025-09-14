@@ -43,8 +43,12 @@ CREATE TABLE IF NOT EXISTS course_offering (
   section     VARCHAR(10),
   capacity    INT,
   term_id     INT NOT NULL REFERENCES term(term_id) ON DELETE CASCADE,
-  course_id   INT NOT NULL REFERENCES course(course_id) ON DELETE CASCADE
+  course_id   INT NOT NULL REFERENCES course(course_id) ON DELETE CASCADE,
+  day_of_week VARCHAR(10),   -- 上课星期几 (Monday–Sunday)
+  start_time  TIME,          -- 上课开始时间
+  end_time    TIME           -- 上课结束时间
 );
+
 
 -- 授课教师表（多对多关系）
 CREATE TABLE IF NOT EXISTS offering_instructor (
