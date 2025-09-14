@@ -10,8 +10,10 @@ CREATE TABLE IF NOT EXISTS student (
   email           VARCHAR(100) UNIQUE NOT NULL,
   dob             DATE,
   major           VARCHAR(100),
-  enrollment_year INT CHECK (enrollment_year BETWEEN 1990 AND 2099)
+  enrollment_year INT CHECK (enrollment_year BETWEEN 1990 AND 2099),
+  gpa             NUMERIC(4,2)   -- Phase 3 新增字段，用于存储当前 GPA
 );
+
 
 -- 教师表
 CREATE TABLE IF NOT EXISTS teacher (
