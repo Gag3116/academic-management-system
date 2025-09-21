@@ -1,0 +1,37 @@
+@startuml
+!define RECTANGLE class
+
+RECTANGLE Student
+RECTANGLE Teacher
+RECTANGLE Admin
+
+rectangle "Enrollment Manager" as Enrollment
+rectangle "Grade Manager" as Grade
+rectangle "Attendance Manager" as Attendance
+rectangle "Course Manager" as CourseMgr
+rectangle "Reporting & Analytics" as Reporting
+
+database "Enrollment DB" as D2
+database "Grade DB" as D3
+database "Attendance DB" as D4
+database "Course/Term DB" as D1
+
+Student --> Enrollment : Enrollment Request
+Teacher --> Grade : Record Grades
+Teacher --> Attendance : Record Attendance
+Admin --> CourseMgr : Setup Courses & Terms
+
+Enrollment --> D2
+Grade --> D3
+Attendance --> D4
+CourseMgr --> D1
+
+Enrollment --> Reporting
+Grade --> Reporting
+Attendance --> Reporting
+CourseMgr --> Reporting
+
+Reporting --> Student : Transcript / Attendance
+Reporting --> Teacher : Reports
+Reporting --> Admin : Analytics
+@enduml
